@@ -1,32 +1,45 @@
-const CLIENT_ID = '1362801876701020421';
-const REDIRECT_URI = 'https://avyra-seven.vercel.app'; // Update this
-const API_ENDPOINT = 'https://discord.com/api/oauth2/authorize';
-const TOKEN_ENDPOINT = 'https://discord.com/api/oauth2/token';
+const CLIENT_ID = '1362490111983353917'; // Replace with your Discord Application Client ID
+const REDIRECT_URI = 'https://avyra-seven.vercel.app'; // Replace with your deployed Vercel URL
 
+// Function to redirect users to Discord for OAuth login
 function loginWithDiscord() {
-  const scope = 'identify';
-  const responseType = 'code';
-  const discordAuthURL = `${API_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=${responseType}&scope=${scope}`;
-  window.location.href = discordAuthURL;
+  const scope = 'identify'; // Scopes for the requested permissions (identify for basic user info)
+  const responseType = 'code'; // The response type to get an authorization code
+  const discordAuthURL = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=${responseType}&scope=${scope}`;
+  window.location.href = discordAuthURL; // Redirect to Discord login page
 }
 
+// On page load, check for the authorization code in the URL and process it
 window.onload = async function () {
   const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get('code');
+  const code = urlParams.get('code'); // Extract the authorization code from the URL
 
   if (code) {
-    // Exchange code for token
-    const body = new URLSearchParams({
-      client_id: CLIENT_ID,
-      client_secret: 'YOUR_CLIENT_SECRET_HERE', // Only if you use a backend (see below)
-      grant_type: 'authorization_code',
-      code: code,
-      redirect_uri: REDIRECT_URI,
-      scope: 'identify'
-    });
+    // If there's a code, send it to the backend to exchange it for an access token
+    try {
+      const res = await fetch('/api/discord-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
 
-    // This request must be done on a secure backend, not in frontend JS.
-    alert("OAuth code received, but token exchange requires a backend.");
-    console.log("Authorization code:", code);
+      const data = await res.json();
+
+      if (data.user) {
+        // Successfully authenticated, display user info
+        console.log("Logged in as:", data.user.username);
+        alert(`Welcome, ${data.user.username}!`);
+
+        // You can store the user info or session here if needed
+        // For example, save it to localStorage or call other functions to handle user data
+      } else {
+        // Handle login failure
+        console.error("Login failed:", data);
+        alert("Login failed. Check the console.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("An error occurred during login.");
+    }
   }
 };
