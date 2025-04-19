@@ -6,7 +6,7 @@ const DASHBOARD_URL = '/dashboard.html'; // URL for your dashboard page
 function loginWithDiscord() {
   const scope = 'identify'; // Scopes for the requested permissions (identify for basic user info)
   const responseType = 'code'; // The response type to get an authorization code
-  const discordAuthURL = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=${responseType}&scope=${scope}`;
+  const discordAuthURL = `https://discord.com/oauth2/authorize?client_id=1362490111983353917&response_type=code&redirect_uri=https%3A%2F%2Favyra-ivory.vercel.app&scope=identify+email`;
   window.location.href = discordAuthURL; // Redirect to Discord login page
 }
 
