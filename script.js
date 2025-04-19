@@ -1,5 +1,5 @@
 const CLIENT_ID = '1362490111983353917'; // Replace with your Discord Application Client ID
-const REDIRECT_URI = 'https://avyra-seven.vercel.app'; // Replace with your deployed Vercel URL
+const REDIRECT_URI = 'https://avyra-ivory.vercel.app'; // Replace with your deployed Vercel URL
 const DASHBOARD_URL = '/dashboard.html'; // URL for your dashboard page
 
 // Function to redirect users to Discord for OAuth login
