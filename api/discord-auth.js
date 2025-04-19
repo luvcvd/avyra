@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   const CLIENT_ID = '1362490111983353917';
-  const CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
+  const CLIENT_SECRET = 'FLOJHVxYXe1i9Iqn9C9Y5Vmk-wz9sxwW';
   const REDIRECT_URI = 'https://avyra-seven.vercel.app';
 
   try {
