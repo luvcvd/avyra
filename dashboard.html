@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Avyra Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
-      padding: 0;
+      background-color: #0f1117;
+      color: #ffffff;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #12151c;
-      color: #fff;
     }
 
     header {
+      background-color: #1a1d29;
       padding: 20px;
-      background-color: #1f2230;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     header h1 {
+      margin: 0;
       font-size: 1.8rem;
     }
 
@@ -29,72 +29,65 @@
       padding: 30px;
     }
 
-    .workspace-header {
+    .header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
-    .workspace-header h2 {
-      font-size: 1.5rem;
+    .header-row h2 {
+      margin: 0;
     }
 
     #createWorkspaceBtn {
-      padding: 10px 20px;
-      font-size: 1rem;
-      background-color: #5865F2;
-      border: none;
-      border-radius: 5px;
+      background-color: #5865f2;
       color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 1rem;
       cursor: pointer;
     }
 
     #createWorkspaceBtn:disabled {
-      background-color: #2f3240;
+      background-color: #444857;
       cursor: not-allowed;
     }
 
     .workspace-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 20px;
     }
 
     .workspace-card {
-      background-color: #1f2230;
+      background-color: #1c1f2b;
       padding: 20px;
       border-radius: 10px;
-      transition: 0.2s;
     }
 
-    .workspace-card:hover {
-      background-color: #252834;
+    .workspace-card h3 {
+      margin: 0 0 10px;
     }
 
-    .workspace-name {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-    }
-
-    .workspace-actions button {
-      background-color: #444859;
+    .workspace-card button {
+      background-color: #30354b;
       color: white;
       border: none;
-      padding: 5px 10px;
-      margin-right: 5px;
-      border-radius: 4px;
+      padding: 8px 12px;
+      margin-top: 10px;
+      border-radius: 5px;
       cursor: pointer;
     }
 
-    .workspace-actions button:hover {
-      background-color: #5865F2;
+    .workspace-card button:hover {
+      background-color: #5865f2;
     }
 
     .no-workspaces {
       text-align: center;
-      margin-top: 50px;
-      font-size: 1.1rem;
+      margin-top: 40px;
       color: #888;
     }
   </style>
@@ -102,19 +95,80 @@
 <body>
   <header>
     <h1>Avyra Dashboard</h1>
-    <div id="userInfo">Loading...</div>
+    <div id="userInfo">Logged In</div>
   </header>
 
   <div class="container">
-    <div class="workspace-header">
+    <div class="header-row">
       <h2>Your Workspaces</h2>
       <button id="createWorkspaceBtn">+ Create Workspace</button>
     </div>
 
     <div id="workspaceGrid" class="workspace-grid"></div>
-    <div id="noWorkspaces" class="no-workspaces" style="display: none;">You have no workspaces yet.</div>
+    <div id="noWorkspaces" class="no-workspaces" style="display: none;">
+      You haven't created any workspaces yet.
+    </div>
   </div>
 
-  <script src="dashboard.js"></script>
+  <script>
+    const workspaceGrid = document.getElementById('workspaceGrid');
+    const createBtn = document.getElementById('createWorkspaceBtn');
+    const noWorkspaces = document.getElementById('noWorkspaces');
+
+    let workspaces = JSON.parse(localStorage.getItem('avyraWorkspaces')) || [];
+
+    function saveWorkspaces() {
+      localStorage.setItem('avyraWorkspaces', JSON.stringify(workspaces));
+    }
+
+    function renderWorkspaces() {
+      workspaceGrid.innerHTML = '';
+      if (workspaces.length === 0) {
+        noWorkspaces.style.display = 'block';
+      } else {
+        noWorkspaces.style.display = 'none';
+      }
+
+      workspaces.forEach((ws, index) => {
+        const card = document.createElement('div');
+        card.className = 'workspace-card';
+        card.innerHTML = `
+          <h3>${ws.name}</h3>
+          <button onclick="openWorkspace(${index})">Open</button>
+          <button onclick="deleteWorkspace(${index})" style="margin-left: 10px; background-color: #842020;">Delete</button>
+        `;
+        workspaceGrid.appendChild(card);
+      });
+
+      createBtn.disabled = workspaces.length >= 3;
+    }
+
+    function createWorkspace() {
+      if (workspaces.length >= 3) return;
+
+      const name = prompt('Enter a name for your workspace:');
+      if (!name) return;
+
+      workspaces.push({ name });
+      saveWorkspaces();
+      renderWorkspaces();
+    }
+
+    function deleteWorkspace(index) {
+      if (!confirm(`Delete workspace "${workspaces[index].name}"?`)) return;
+      workspaces.splice(index, 1);
+      saveWorkspaces();
+      renderWorkspaces();
+    }
+
+    function openWorkspace(index) {
+      alert(`Opening workspace: ${workspaces[index].name}`);
+      // Replace this with actual redirection when ready
+    }
+
+    createBtn.addEventListener('click', createWorkspace);
+
+    renderWorkspaces();
+  </script>
 </body>
 </html>
