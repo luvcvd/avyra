@@ -1,5 +1,6 @@
 const CLIENT_ID = '1362490111983353917'; // Replace with your Discord Application Client ID
 const REDIRECT_URI = 'https://avyra-seven.vercel.app'; // Replace with your deployed Vercel URL
+const DASHBOARD_URL = '/dashboard.html'; // URL for your dashboard page
 
 // Function to redirect users to Discord for OAuth login
 function loginWithDiscord() {
@@ -26,12 +27,15 @@ window.onload = async function () {
       const data = await res.json();
 
       if (data.user) {
-        // Successfully authenticated, display user info
+        // Successfully authenticated, store user data
         console.log("Logged in as:", data.user.username);
         alert(`Welcome, ${data.user.username}!`);
 
-        // You can store the user info or session here if needed
-        // For example, save it to localStorage or call other functions to handle user data
+        // Store user data in localStorage (or you can use cookies, sessionStorage, etc.)
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        // Redirect to the dashboard
+        window.location.href = DASHBOARD_URL;
       } else {
         // Handle login failure
         console.error("Login failed:", data);
